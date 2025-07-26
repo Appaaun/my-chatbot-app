@@ -125,7 +125,7 @@ const App = () => {
       }
     } catch (error) {
       console.error("Error calling Gemini API:", error);
-      return "เกิดข้อผิดพลาดในการเชื่อมต่อกับ AI กรุณาลองอีกครั้งในภายหลัง 🔌";
+      return "เกิดข้อผิดพลาดในการเชื่อมต่อกับ AI กรุณาลองอีกครั้งในภายหลัง �";
     } finally {
       setIsLoading(false); // Set loading to false after API call
     }
@@ -293,7 +293,8 @@ const App = () => {
           color: #1565C0; /* Darker blue text */
           background-color: #E3F2FD; /* Lighter blue background */
           box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-          padding: 10px 20px; /* Increased padding for larger chips */
+          /* Adjusted padding for smaller screens */
+          padding: 8px 16px; /* Reduced padding for smaller chips */
         }
         .suggestion-chip:hover {
           background-color: #90CAF9; /* More prominent blue on hover */
@@ -322,7 +323,7 @@ const App = () => {
         }
         `}
       </style>
-      <div className="flex flex-col h-full w-full"> {/* Added w-full here */}
+      <div className="flex flex-col h-full w-full max-w-lg mx-auto"> {/* Added max-w-lg and mx-auto */}
         <div className="flex-1 flex flex-col p-4 overflow-hidden">
           <div className="flex-1 overflow-y-auto pr-4 custom-scrollbar"> {/* Increased right padding */}
             {messages.map((msg, index) => (
@@ -352,7 +353,7 @@ const App = () => {
 
         <div className="p-4 bg-white border-t border-gray-200 shadow-lg flex flex-col gap-4 rounded-t-xl"> {/* Increased gap for more space */}
           {/* Symptom Suggestions */}
-          <div className="flex flex-wrap gap-3 mb-4"> {/* Increased gap and margin-bottom */}
+          <div className="flex flex-wrap gap-2 mb-4"> {/* Adjusted gap */}
             {allSymptoms.map((symptom) => (
               <span
                 key={symptom}
@@ -393,3 +394,4 @@ const App = () => {
 };
 
 export default App;
+�
