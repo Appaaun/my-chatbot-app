@@ -22,7 +22,7 @@ const rawDrugData = [
   {"อาการ":"ปวดประจำเดือน","ยาแนะนำ":"Mefenamic acid 500 mg tab","ขนาดในผู้ใหญ่":"500 mg 3 ครั้ง/วัน หลังอาหาร","ขนาดในเด็ก":"ไม่แนะนำในเด็ก < 14 ปี","คำเตือนในผู้ป่วยโรคไต":"ควรหลีกเลี่ยงหากเป็น CKD ระยะ 3 ขึ้นไป"},
   {"อาการ":"ปวดท้อง","ยาแนะนำ":"Buscopan 10 mg tab","ขนาดในผู้ใหญ่":"10-20 mg วันละ 3-5 ครั้ง","ขนาดในเด็ก":"6-12 ปี: 10 mg วันละ 3 ครั้ง, < 6 ปี: ไม่แนะนำ","คำเตือนในผู้ป่วยโรคไต":"ปลอดภัย"},
   {"อาการ":"ปวดท้อง","ยาแนะนำ":"Activated charcoal 250 mg tab","ขนาดในผู้ใหญ่":"250-500 mg ทุก 4-6 ชม.","ขนาดในเด็ก":"250 mg ทุก 4-6 ชม.","คำเตือนในผู้ป่วยโรคไต":"ปลอดภัย"},
-  {"อาการ":"ท้องเสีย","ยาแนะนำ":"Oral rehydration salt (ORS)","ขนาดในผู้ใหญ่":"จิบเรื่อยๆ","ขนาดในเด็ก":"จิบเรื่อยๆ","คำเตือนในผู้ป่วยโรคไต":"ปลอดภัย"},
+  {"อาการ":"ท้องเสีย","ยาแนะนำ":"Oral rehydration salt (ORS)","ขนาดในผู้ใหญ่":"จิบเรื่อยๆ","ขนาดในเด็ก":"จิบบ่อยๆ","คำเตือนในผู้ป่วยโรคไต":"ปลอดภัย"},
   {"อาการ":"ท้องเสีย","ยาแนะนำ":"Activated charcoal 250 mg tab","ขนาดในผู้ใหญ่":"250-500 mg ทุก 4-6 ชม.","ขนาดในเด็ก":"250 mg ทุก 4-6 ชม.","คำเตือนในผู้ป่วยโรคไต":"ปลอดภัย"},
   {"อาการ":"ท้องเสีย","ยาแนะนำ":"Loperamide 2 mg tab","ขนาดในผู้ใหญ่":"4 mg ครั้งแรก จากนั้น 2 mg หลังถ่ายเหลวทุกครั้ง ไม่เกิน 16 mg/วัน","ขนาดในเด็ก":"ไม่แนะนำในเด็ก < 6 ปี","คำเตือนในผู้ป่วยโรคไต":"ควรใช้ด้วยความระมัดระวัง"},
   {"อาการ":"ท้องผูก/ริดสีดวงทวาร","ยาแนะนำ":"Magnesium hydroxide suspension","ขนาดในผู้ใหญ่":"15-30 ml ก่อนนอน","ขนาดในเด็ก":"ไม่แนะนำในเด็ก","คำเตือนในผู้ป่วยโรคไต":"ระวังภาวะ Mg สูงในผู้ป่วยไตบกพร่อง"},
@@ -277,7 +277,7 @@ const App = () => {
           max-width: 80%;
           padding: 12px 18px; /* Slightly more padding */
           border-radius: 20px; /* Overall more rounded */
-          margin-bottom: 12px; /* Slightly more margin */
+          margin-bottom: 16px; /* Increased margin-bottom for more space */
           word-wrap: break-word;
           box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Softer shadow */
           animation: fadeIn 0.3s ease-out; /* Fade in animation */
@@ -293,6 +293,7 @@ const App = () => {
           color: #1565C0; /* Darker blue text */
           background-color: #E3F2FD; /* Lighter blue background */
           box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+          padding: 10px 20px; /* Increased padding for larger chips */
         }
         .suggestion-chip:hover {
           background-color: #90CAF9; /* More prominent blue on hover */
@@ -323,7 +324,7 @@ const App = () => {
       </style>
       <div className="flex flex-col h-full w-full"> {/* Added w-full here */}
         <div className="flex-1 flex flex-col p-4 overflow-hidden">
-          <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+          <div className="flex-1 overflow-y-auto pr-4 custom-scrollbar"> {/* Increased right padding */}
             {messages.map((msg, index) => (
               <div
                 key={index}
@@ -349,13 +350,13 @@ const App = () => {
           </div>
         </div>
 
-        <div className="p-4 bg-white border-t border-gray-200 shadow-lg flex flex-col gap-2 rounded-t-xl"> {/* Rounded top for the input area */}
+        <div className="p-4 bg-white border-t border-gray-200 shadow-lg flex flex-col gap-4 rounded-t-xl"> {/* Increased gap for more space */}
           {/* Symptom Suggestions */}
-          <div className="flex flex-wrap gap-2 mb-2">
+          <div className="flex flex-wrap gap-3 mb-4"> {/* Increased gap and margin-bottom */}
             {allSymptoms.map((symptom) => (
               <span
                 key={symptom}
-                className="suggestion-chip text-sm font-medium px-4 py-2 rounded-full cursor-pointer"
+                className="suggestion-chip text-sm font-medium rounded-full cursor-pointer"
                 onClick={() => handleSymptomClick(symptom)}
               >
                 {symptom}
