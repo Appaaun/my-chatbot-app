@@ -44,7 +44,6 @@ const rawDrugData = [
   {"อาการ":"น้ำมูก คัดจมูก","ยาแนะนำ":"Chlorpheniramine 4 mg tab","ขนาดในผู้ใหญ่":"4 mg ทุก 6 ชม.","ขนาดในเด็ก":"0.1 mg/kg ทุก 6 ชม.","คำเตือนในผู้ป่วยโรคไต":"ระวังฤทธิ์กด CNS"},
   {"อาการ":"มีแผลในปาก","ยาแนะนำ":"Triamcinolone acetonide oral paste","ขนาดในผู้ใหญ่":"ทาบริเวณแผลวันละ 2-3 ครั้ง","ขนาดในเด็ก":"เหมือนผู้ใหญ่","คำเตือนในผู้ป่วยโรคไต":"ปลอดภัย"},
   {"อาการ":"อาการคันผิวหนัง/ศีรษะ","ยาแนะนำ":"Chlorpheniramine 4 mg tab","ขนาดในผู้ใหญ่":"4 mg ทุก 6 ชม.","ขนาดในเด็ก":"0.1 mg/kg ทุก 6 ชม.","คำเตือนในผู้ป่วยโรคไต":"หลีกเลี่ยงถ้าผู้ป่วยง่วงมาก"},
-  // Updated entries for "อาการนอนไม่หลับ"
   {"อาการ":"อาการนอนไม่หลับ","ยาแนะนำ":"Lorazepam 0.5 mg tab","ขนาดในผู้ใหญ่":"0.5-2 mg ก่อนนอน (ปรับตามการตอบสนอง)","ขนาดในเด็ก":"ไม่แนะนำในเด็ก","คำเตือนในผู้ป่วยโรคไต":"ควรใช้ด้วยความระมัดระวัง อาจต้องปรับขนาดยาในผู้ป่วยไตบกพร่องรุนแรง"},
   {"อาการ":"อาการนอนไม่หลับ","ยาแนะนำ":"Amitriptyline 10 mg tab","ขนาดในผู้ใหญ่":"10-25 mg ก่อนนอน (ปรับเพิ่มได้)","ขนาดในเด็ก":"ไม่แนะนำในเด็ก","คำเตือนในผู้ป่วยโรคไต":"ควรใช้ด้วยความระมัดระวัง อาจต้องปรับขนาดยาในผู้ป่วยไตบกพร่องรุนแรง"},
   {"อาการ":"เมารถ เมาเรือ","ยาแนะนำ":"Dimenhydrinate 50 mg tab","ขนาดในผู้ใหญ่":"50-100 mg ก่อนเดินทาง 30 นาที","ขนาดในเด็ก":"1.25 mg/kg/dose ก่อนเดินทาง 30 นาที","คำเตือนในผู้ป่วยโรคไต":"ระวังอาการง่วงมากในผู้ป่วยโรคไต"},
@@ -75,10 +74,9 @@ const allSymptoms = Object.keys(drugDataBySymptom);
 const App = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
-  const [isLoading, setIsLoading] = useState(false); // New state for loading indicator
+  const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
 
-  // Scroll to the latest message
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -87,23 +85,20 @@ const App = () => {
     scrollToBottom();
   }, [messages]);
 
-  // Initial welcome message from the chatbot
   useEffect(() => {
     setMessages([
       { type: 'bot', text: 'สวัสดีครับ ผมคือ **ผู้ช่วยเภสัชกร AI** ที่ออกแบบมาเพื่อสนับสนุนบุคลากรทางการแพทย์ในการตัดสินใจรักษา 👩‍⚕️💊' },
-      { type: 'bot', text: 'Chatbot นี้มีฐานข้อมูลยาในโรงพยาบาลโพธิ์ศรีสุวรรณเท่านั้นครับ ✨' }, // Updated line
+      { type: 'bot', text: 'Chatbot นี้มีฐานข้อมูลยาในโรงพยาบาลโพธิ์ศรีสุวรรณเท่านั้นครับ ✨' },
       { type: 'bot', text: 'คุณสามารถพิมพ์อาการ เช่น "ปวดหัว", "ไข้ ไอ เจ็บคอ", "ท้องเสีย" หรือเลือกจากรายการด้านล่างนี้ได้เลยครับ 👇' },
-      { type: 'bot', text: 'หากต้องการทราบขนาดยาของยาเฉพาะเจาะจง ให้พิมพ์ **ชื่อยา** ตามด้วย **ขนาดยาที่เหมาะสม** เช่น "Paracetamol ขนาดยาที่เหมาะสม" ครับ' } // New instruction
+      { type: 'bot', text: 'หากต้องการทราบขนาดยาของยาเฉพาะเจาะจง ให้พิมพ์ **ชื่อยา** ตามด้วย **ขนาดยาที่เหมาะสม** เช่น "Paracetamol ขนาดยาที่เหมาะสม" ครับ' }
     ]);
   }, []);
 
-  // Function to call the LLM (Gemini API)
   const callGeminiAPI = async (promptText) => {
-    setIsLoading(true); // Set loading to true before API call
-    let chatHistory = [];
-    chatHistory.push({ role: "user", parts: [{ text: promptText }] });
+    setIsLoading(true);
+    let chatHistory = [{ role: "user", parts: [{ text: promptText }] }];
     const payload = { contents: chatHistory };
-    const apiKey = ""; // Leave this as-is; Canvas will provide it at runtime
+    const apiKey = "";
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
     try {
@@ -114,173 +109,118 @@ const App = () => {
       });
       const result = await response.json();
 
-      if (result.candidates && result.candidates.length > 0 &&
-          result.candidates[0].content && result.candidates[0].content.parts &&
-          result.candidates[0].content.parts.length > 0) {
-        const text = result.candidates[0].content.parts[0].text;
-        return text;
+      if (result.candidates?.[0]?.content?.parts?.[0]) {
+        return result.candidates[0].content.parts[0].text;
       } else {
         console.error("Unexpected API response structure:", result);
         return "ขออภัยครับ AI ไม่สามารถให้คำตอบได้ในขณะนี้ กรุณาลองอีกครั้งในภายหลัง 😔";
       }
     } catch (error) {
       console.error("Error calling Gemini API:", error);
-      return "เกิดข้อผิดพลาดในการเชื่อมต่อกับ AI กรุณาลองอีกครั้งในภายหลัง �";
+      return "เกิดข้อผิดพลาดในการเชื่อมต่อกับ AI กรุณาลองอีกครั้งในภายหลัง 🔌";
     } finally {
-      setIsLoading(false); // Set loading to false after API call
+      setIsLoading(false);
     }
   };
 
-  // Function to handle user input and generate bot response
-  const handleSendMessage = async () => { // Made async to await LLM call
+  const handleSendMessage = async () => {
     if (input.trim() === '') return;
 
     const userMessage = { type: 'user', text: input.trim() };
     setMessages((prevMessages) => [...prevMessages, userMessage]);
+    setInput(''); // Clear input immediately
 
     const lowerCaseInput = input.trim().toLowerCase();
     let botResponse = '';
     let isDirectMatch = false;
 
-    // 1. Check for specific drug dosage query (e.g., "Paracetamol ขนาดยาที่เหมาะสม")
     const dosageQueryMatch = lowerCaseInput.match(/(.+)\s+ขนาดยาที่เหมาะสม/);
-    if (dosageQueryMatch && dosageQueryMatch[1]) {
+    if (dosageQueryMatch?.[1]) {
       const drugNameQuery = dosageQueryMatch[1].trim();
       const foundDrugs = rawDrugData.filter(drug => drug['ยาแนะนำ'].toLowerCase().includes(drugNameQuery));
 
       if (foundDrugs.length > 0) {
         botResponse += `ข้อมูลขนาดยาสำหรับ "${drugNameQuery}" ครับ:\n\n`;
         foundDrugs.forEach(drug => {
-          botResponse += `💊 **${drug.ยาแนะนำ}**\n`;
-          botResponse += `  - **ขนาดในผู้ใหญ่:** ${drug.ขนาดในผู้ใหญ่}\n`;
-          botResponse += `  - **ขนาดในเด็ก:** ${drug.ขนาดในเด็ก}\n`;
-          if (drug.คำเตือนในผู้ป่วยโรคไต) {
-            botResponse += `  - **คำเตือนในผู้ป่วยโรคไต:** ${drug.คำเตือนในผู้ป่วยโรคไต}\n`;
-          } else {
-            botResponse += `  - **คำเตือนในผู้ป่วยโรคไต:** ไม่มีข้อมูลเฉพาะเจาะจงในเอกสารที่ให้มา (โปรดพิจารณาจากข้อมูลผู้ป่วยและปรึกษาเภสัชกร)\n`;
-          }
-          botResponse += '\n';
+          botResponse += `💊 **${drug.ยาแนะนำ}**\n- **ขนาดในผู้ใหญ่:** ${drug.ขนาดในผู้ใหญ่}\n- **ขนาดในเด็ก:** ${drug.ขนาดในเด็ก}\n`;
+          botResponse += `- **คำเตือนในผู้ป่วยโรคไต:** ${drug.คำเตือนในผู้ป่วยโรคไต || 'ไม่มีข้อมูลเฉพาะเจาะจง'}\n\n`;
         });
-        botResponse += '⚠️ **ข้อควรพิจารณาสำหรับบุคลากรทางการแพทย์:** ข้อมูลนี้เป็นเพียงคำแนะนำเบื้องต้นเพื่อสนับสนุนการตัดสินใจ ไม่สามารถใช้แทนการวินิจฉัยทางคลินิก การประเมินผู้ป่วยรายบุคคล หรือแนวปฏิบัติทางการแพทย์ที่เป็นมาตรฐานได้ โปรดพิจารณาข้อมูลผู้ป่วยอย่างรอบคอบและปรึกษาผู้เชี่ยวชาญเพิ่มเติมหากมีข้อสงสัย 🙏';
         isDirectMatch = true;
       }
     }
 
-    // 2. Check for drug name only query
     if (!isDirectMatch) {
-      // Find drugs where the input matches or is included in the drug name
       const foundDrugsByName = rawDrugData.filter(drug => drug['ยาแนะนำ'].toLowerCase().includes(lowerCaseInput));
-
       if (foundDrugsByName.length > 0) {
         botResponse += `ข้อมูลสำหรับยา "${input.trim()}" ครับ:\n\n`;
         foundDrugsByName.forEach(drug => {
-          botResponse += `💊 **${drug.ยาแนะนำ}**\n`;
-          botResponse += `  - **อาการที่เกี่ยวข้อง:** ${drug.อาการ}\n`; // Show associated symptom
-          botResponse += `  - **ขนาดในผู้ใหญ่:** ${drug.ขนาดในผู้ใหญ่}\n`;
-          botResponse += `  - **ขนาดในเด็ก:** ${drug.ขนาดในเด็ก}\n`;
-          if (drug.คำเตือนในผู้ป่วยโรคไต) {
-            botResponse += `  - **คำเตือนในผู้ป่วยโรคไต:** ${drug.คำเตือนในผู้ป่วยโรคไต}\n`;
-          } else {
-            botResponse += `  - **คำเตือนในผู้ป่วยโรคไต:** ไม่มีข้อมูลเฉพาะเจาะจงในเอกสารที่ให้มา (โปรดพิจารณาจากข้อมูลผู้ป่วยและปรึกษาเภสัชกร)\n`;
-          }
-          botResponse += '\n';
+          botResponse += `💊 **${drug.ยาแนะนำ}**\n- **อาการที่เกี่ยวข้อง:** ${drug.อาการ}\n- **ขนาดในผู้ใหญ่:** ${drug.ขนาดในผู้ใหญ่}\n- **ขนาดในเด็ก:** ${drug.ขนาดในเด็ก}\n`;
+          botResponse += `- **คำเตือนในผู้ป่วยโรคไต:** ${drug.คำเตือนในผู้ป่วยโรคไต || 'ไม่มีข้อมูลเฉพาะเจาะจง'}\n\n`;
         });
-        botResponse += '⚠️ **ข้อควรพิจารณาสำหรับบุคลากรทางการแพทย์:** ข้อมูลนี้เป็นเพียงคำแนะนำเบื้องต้นเพื่อสนับสนุนการตัดสินใจ ไม่สามารถใช้แทนการวินิจฉัยทางคลินิก การประเมินผู้ป่วยรายบุคคล หรือแนวปฏิบัติทางการแพทย์ที่เป็นมาตรฐานได้ โปรดพิจารณาข้อมูลผู้ป่วยอย่างรอบคอบและปรึกษาผู้เชี่ยวชาญเพิ่มเติมหากมีข้อสงสัย 🙏';
         isDirectMatch = true;
       }
     }
 
-    // 3. Check for symptom query
     if (!isDirectMatch) {
       const matchedSymptom = allSymptoms.find(symptom => lowerCaseInput.includes(symptom.toLowerCase()));
-
       if (matchedSymptom) {
         const drugs = drugDataBySymptom[matchedSymptom];
-        if (drugs && drugs.length > 0) {
-          botResponse += `สำหรับอาการ "${matchedSymptom}" มียาแนะนำดังนี้ครับ:\n\n`;
-          drugs.forEach(drug => {
-            botResponse += `💊 **${drug.drugName}**\n`;
-            botResponse += `  - **ขนาดในผู้ใหญ่:** ${drug.adultDose}\n`;
-            botResponse += `  - **ขนาดในเด็ก:** ${drug.childDose}\n`;
-            if (drug.kidneyWarning) {
-              botResponse += `  - **คำเตือนในผู้ป่วยโรคไต:** ${drug.kidneyWarning}\n`;
-            } else {
-              botResponse += `  - **คำเตือนในผู้ป่วยโรคไต:** ไม่มีข้อมูลเฉพาะเจาะจงในเอกสารที่ให้มา (โปรดพิจารณาจากข้อมูลผู้ป่วยและปรึกษาเภสัชกร)\n`;
-            }
-            botResponse += '\n';
-          });
-          botResponse += '⚠️ **ข้อควรพิจารณาสำหรับบุคลากรทางการแพทย์:** ข้อมูลนี้เป็นเพียงคำแนะนำเบื้องต้นเพื่อสนับสนุนการตัดสินใจ ไม่สามารถใช้แทนการวินิจฉัยทางคลินิก การประเมินผู้ป่วยรายบุคคล หรือแนวปฏิบัติทางการแพทย์ที่เป็นมาตรฐานได้ โปรดพิจารณาข้อมูลผู้ป่วยอย่างรอบคอบและปรึกษาผู้เชี่ยวชาญเพิ่มเติมหากมีข้อสงสัย 🙏';
-          isDirectMatch = true;
-        }
+        botResponse += `สำหรับอาการ **"${matchedSymptom}"** มียาแนะนำดังนี้ครับ:\n\n`;
+        drugs.forEach(drug => {
+          botResponse += `💊 **${drug.drugName}**\n- **ขนาดในผู้ใหญ่:** ${drug.adultDose}\n- **ขนาดในเด็ก:** ${drug.childDose}\n`;
+          botResponse += `- **คำเตือนในผู้ป่วยโรคไต:** ${drug.kidneyWarning || 'ไม่มีข้อมูลเฉพาะเจาะจง'}\n\n`;
+        });
+        isDirectMatch = true;
       }
     }
 
-    // Fallback to AI if no direct match found
-    if (!isDirectMatch) {
-      const aiPrompt = `ในฐานะผู้ช่วยเภสัชกร AI สำหรับบุคลากรทางการแพทย์ โปรดให้ข้อมูลและคำแนะนำเบื้องต้นที่เกี่ยวข้องกับการตัดสินใจทางคลินิกสำหรับอาการหรือคำถามเกี่ยวกับยา "${input.trim()}" โดยเน้นข้อมูลที่สำคัญสำหรับแพทย์หรือบุคลากรทางการแพทย์ เช่น ข้อควรพิจารณาในการรักษา, การวินิจฉัยแยกโรคเบื้องต้น, ข้อควรระวัง, หรือข้อมูลยาที่เกี่ยวข้อง (หากมี) โปรดระบุด้วยว่าข้อมูลนี้เป็นเพียงข้อมูลสนับสนุน ไม่ใช่การวินิจฉัยหรือคำสั่งการรักษา`;
-      botResponse = await callGeminiAPI(aiPrompt);
-      botResponse += '\n\n⚠️ **ข้อควรพิจารณาจาก AI สำหรับบุคลากรทางการแพทย์:** ข้อมูลนี้สร้างโดย AI เพื่อเป็นข้อมูลสนับสนุนเบื้องต้นเท่านั้น ไม่สามารถใช้แทนการวินิจฉัยทางคลินิก การประเมินผู้ป่วยรายบุคคล หรือแนวปฏิบัติทางการแพทย์ที่เป็นมาตรฐานได้ โปรดพิจารณาข้อมูลผู้ป่วยอย่างรอบคอบและปรึกษาผู้เชี่ยวชาญเพิ่มเติมหากมีข้อสงสัย 🙏';
-    }
-
-    // Simulate a delay for bot response if it's a direct match,
-    // otherwise the delay is handled by the async API call.
+    let finalBotResponse;
     if (isDirectMatch) {
-      setTimeout(() => {
-        setMessages((prevMessages) => [...prevMessages, { type: 'bot', text: botResponse }]);
-      }, 500);
+        finalBotResponse = botResponse + '⚠️ **ข้อควรพิจารณาสำหรับบุคลากรทางการแพทย์:** ข้อมูลนี้เป็นเพียงคำแนะนำเบื้องต้นเพื่อสนับสนุนการตัดสินใจ ไม่สามารถใช้แทนการวินิจฉัยทางคลินิก การประเมินผู้ป่วยรายบุคคล หรือแนวปฏิบัติทางการแพทย์ที่เป็นมาตรฐานได้ โปรดพิจารณาข้อมูลผู้ป่วยอย่างรอบคอบและปรึกษาผู้เชี่ยวชาญเพิ่มเติมหากมีข้อสงสัย 🙏';
     } else {
-      setMessages((prevMessages) => [...prevMessages, { type: 'bot', text: botResponse }]);
+        const aiPrompt = `ในฐานะผู้ช่วยเภสัชกร AI สำหรับบุคลากรทางการแพทย์ โปรดให้ข้อมูลและคำแนะนำเบื้องต้นที่เกี่ยวข้องกับการตัดสินใจทางคลินิกสำหรับอาการหรือคำถามเกี่ยวกับยา "${input.trim()}" โดยเน้นข้อมูลที่สำคัญสำหรับแพทย์หรือบุคลากรทางการแพทย์ เช่น ข้อควรพิจารณาในการรักษา, การวินิจฉัยแยกโรคเบื้องต้น, ข้อควรระวัง, หรือข้อมูลยาที่เกี่ยวข้อง (หากมี) โปรดระบุด้วยว่าข้อมูลนี้เป็นเพียงข้อมูลสนับสนุน ไม่ใช่การวินิจฉัยหรือคำสั่งการรักษา`;
+        const aiResponse = await callGeminiAPI(aiPrompt);
+        finalBotResponse = aiResponse + '\n\n⚠️ **ข้อควรพิจารณาจาก AI สำหรับบุคลากรทางการแพทย์:** ข้อมูลนี้สร้างโดย AI เพื่อเป็นข้อมูลสนับสนุนเบื้องต้นเท่านั้น ไม่สามารถใช้แทนการวินิจฉัยทางคลินิก การประเมินผู้ป่วยรายบุคคล หรือแนวปฏิบัติทางการแพทย์ที่เป็นมาตรฐานได้ โปรดพิจารณาข้อมูลผู้ป่วยอย่างรอบคอบและปรึกษาผู้เชี่ยวชาญเพิ่มเติมหากมีข้อสงสัย 🙏';
     }
-
-    setInput('');
+    
+    setMessages((prevMessages) => [...prevMessages, { type: 'bot', text: finalBotResponse }]);
   };
 
-  // Handle Enter key press
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && !isLoading) { // Prevent sending multiple messages while loading
+    if (e.key === 'Enter' && !isLoading) {
       handleSendMessage();
     }
   };
 
-  // Handle symptom suggestion click
   const handleSymptomClick = (symptom) => {
     setInput(symptom);
-    // Optionally, send the message immediately after clicking a suggestion
-    // handleSendMessage();
   };
 
   return (
-    <div className="flex flex-col h-full min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 font-inter antialiased">
+    <div className="flex flex-col h-full min-h-screen bg-gray-50 font-inter antialiased">
       <style>
         {`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-        body {
-          font-family: 'Inter', sans-serif;
+        body { font-family: 'Inter', sans-serif; }
+        .chat-message {
+          max-width: 85%;
+          padding: 12px 18px;
+          border-radius: 18px;
+          margin-bottom: 12px;
+          word-wrap: break-word;
+          animation: fadeIn 0.3s ease-out;
+          line-height: 1.6;
         }
         .chat-message.user {
-          background-color: #C8E6C9; /* Softer green for user messages */
+          background-color: #e3f2fd;
+          color: #1e3a8a;
           align-self: flex-end;
-          border-bottom-right-radius: 10px; /* More rounded */
-          border-top-right-radius: 20px;
-          border-bottom-left-radius: 20px;
-          border-top-left-radius: 20px;
         }
         .chat-message.bot {
-          background-color: #E0F7FA; /* Light blue for bot messages */
+          background-color: #ffffff;
+          color: #374151;
           align-self: flex-start;
-          border-bottom-left-radius: 10px; /* More rounded */
-          border-top-right-radius: 20px;
-          border-bottom-right-radius: 20px;
-          border-top-left-radius: 20px;
-        }
-        .chat-message {
-          max-width: 80%;
-          padding: 12px 18px; /* Slightly more padding */
-          border-radius: 20px; /* Overall more rounded */
-          margin-bottom: 16px; /* Increased margin-bottom for more space */
-          word-wrap: break-word;
-          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Softer shadow */
-          animation: fadeIn 0.3s ease-out; /* Fade in animation */
+          border: 1px solid #e5e7eb;
         }
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(10px); }
@@ -288,51 +228,43 @@ const App = () => {
         }
         .suggestion-chip {
           cursor: pointer;
-          transition: all 0.2s ease-in-out; /* Smooth transition for all properties */
-          border: 1px solid #90CAF9; /* Light blue border */
-          color: #1565C0; /* Darker blue text */
-          background-color: #E3F2FD; /* Lighter blue background */
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-          /* Adjusted padding for smaller screens */
-          padding: 8px 16px; /* Reduced padding for smaller chips */
+          transition: all 0.2s ease-in-out;
+          border: 1px solid #d1d5db;
+          color: #4b5563;
+          background-color: #f9fafb;
+          padding: 8px 16px;
         }
         .suggestion-chip:hover {
-          background-color: #90CAF9; /* More prominent blue on hover */
-          color: #FFFFFF; /* White text on hover */
-          transform: translateY(-2px); /* Slight lift effect */
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* More pronounced shadow */
+          background-color: #e5e7eb;
+          border-color: #9ca3af;
         }
         .send-button {
-          background-color: #64B5F6; /* Softer blue */
-          transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+          background-color: #3b82f6;
+          transition: background-color 0.2s ease-in-out;
         }
-        .send-button:hover {
-          background-color: #42A5F5; /* Darker blue on hover */
-          transform: translateY(-1px);
-        }
-        .send-button:active {
-          transform: translateY(0);
+        .send-button:hover { background-color: #2563eb; }
+        .send-button:disabled { background-color: #9ca3af; }
+        .input-field-container {
+          background-color: #ffffff;
+          border: 1px solid #d1d5db;
+          border-radius: 16px;
         }
         .input-field {
-          border: 1px solid #BBDEFB; /* Light blue border for input */
-          border-radius: 10px; /* Rounded input field */
+          background-color: transparent;
         }
         .input-field:focus {
-          border-color: #42A5F5; /* Focus border color */
-          box-shadow: 0 0 0 2px rgba(66, 165, 245, 0.2); /* Soft focus shadow */
+          outline: none;
+          box-shadow: none;
         }
         `}
       </style>
-      <div className="flex flex-col h-full w-full max-w-lg mx-auto"> {/* Added max-w-lg and mx-auto */}
+      <div className="flex flex-col h-full w-full max-w-2xl mx-auto">
         <div className="flex-1 flex flex-col p-4 overflow-hidden">
-          <div className="flex-1 overflow-y-auto pr-4 custom-scrollbar"> {/* Increased right padding */}
+          <div className="flex-1 overflow-y-auto pr-2">
             {messages.map((msg, index) => (
-              <div
-                key={index}
-                className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}
-              >
+              <div key={index} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div
-                  className={`chat-message ${msg.type === 'user' ? 'user' : 'bot'}`}
+                  className={`chat-message ${msg.type}`}
                   dangerouslySetInnerHTML={{ __html: msg.text.replace(/\n/g, '<br />').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }}
                 ></div>
               </div>
@@ -340,9 +272,9 @@ const App = () => {
             {isLoading && (
               <div className="flex justify-start">
                 <div className="chat-message bot">
-                  <div className="flex items-center">
-                    <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></span>
-                    กำลังคิดคำตอบ... 💭
+                  <div className="flex items-center text-gray-500">
+                    <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-500 mr-3"></span>
+                    กำลังคิดคำตอบ...
                   </div>
                 </div>
               </div>
@@ -351,13 +283,12 @@ const App = () => {
           </div>
         </div>
 
-        <div className="p-4 bg-white border-t border-gray-200 shadow-lg flex flex-col gap-4 rounded-t-xl"> {/* Increased gap for more space */}
-          {/* Symptom Suggestions */}
-          <div className="flex flex-wrap gap-2 mb-4"> {/* Adjusted gap */}
-            {allSymptoms.map((symptom) => (
+        <div className="p-4 bg-gray-50/80 backdrop-blur-sm border-t border-gray-200">
+          <div className="flex flex-wrap gap-2 mb-3 justify-center">
+            {allSymptoms.slice(0, 12).map((symptom) => ( // Show a limited number of suggestions
               <span
                 key={symptom}
-                className="suggestion-chip text-sm font-medium rounded-full cursor-pointer"
+                className="suggestion-chip text-sm font-medium rounded-full"
                 onClick={() => handleSymptomClick(symptom)}
               >
                 {symptom}
@@ -365,26 +296,27 @@ const App = () => {
             ))}
           </div>
 
-          <div className="flex rounded-lg shadow-md overflow-hidden">
+          <div className="flex items-center rounded-full shadow-sm overflow-hidden input-field-container p-1">
             <input
               type="text"
-              className="flex-1 p-3 text-gray-800 focus:outline-none input-field"
+              className="flex-1 py-2 px-4 text-gray-800 focus:outline-none input-field"
               placeholder="พิมพ์อาการหรือชื่อยาที่นี่..."
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={handleKeyPress}
-              disabled={isLoading} // Disable input while loading
+              disabled={isLoading}
             />
             <button
-              className="send-button text-white font-semibold py-3 px-6 rounded-r-lg"
+              className="send-button text-white font-semibold rounded-full w-10 h-10 flex items-center justify-center"
               onClick={handleSendMessage}
-              disabled={isLoading} // Disable button while loading
+              disabled={isLoading || !input.trim()}
             >
-              {isLoading ? 'ส่ง...' : 'ส่ง ✨'}
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clipRule="evenodd" />
+              </svg>
             </button>
           </div>
-          {/* Footer with "จัดทำโดย Pharmacist's APPA" */}
-          <div className="text-center text-gray-500 text-xs mt-2">
+          <div className="text-center text-gray-400 text-xs mt-3">
             จัดทำโดย Pharmacist's APPA
           </div>
         </div>
@@ -394,4 +326,3 @@ const App = () => {
 };
 
 export default App;
-�
